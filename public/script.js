@@ -148,8 +148,8 @@ async function cargarProductosDesdeFirebase() {
     snapshot.forEach(doc => {
       const productoData = doc.data();
       productos.push({
-        id: productoData.id,
         nombre: productoData.nombre,
+        id: productoData.id,
         descripcion: productoData.descripcion,
         precio: productoData.precio,
         categoria: productoData.categoria,
