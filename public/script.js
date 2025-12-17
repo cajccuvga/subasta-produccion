@@ -130,7 +130,7 @@ const estilosAdicionales = `
 
 // 🔥 REEMPLAZA EL ARRAY DE PRODUCTOS CON ESTO
 let productos = [];
-
+/*
 // Función para cargar productos desde Firebase
 async function cargarProductosDesdeFirebase() {
   try {
@@ -165,6 +165,44 @@ async function cargarProductosDesdeFirebase() {
     productos = [];
   }
 }
+  */
+
+// Función para cargar productos desde Firebase ORDENADOS POR NOMBRE
+async function cargarProductosDesdeFirebase() {
+  try {
+    console.log("📦 Cargando productos...");
+
+    const snapshot = await db.collection("productos").orderBy("nombre").get();
+
+    if (snapshot.empty) {
+      console.log("⚠️ No se encontraron productos en la base de datos ");
+      productos = [];
+      return;
+    }
+
+    productos = [];
+    snapshot.forEach(doc => {
+      const productoData = doc.data();
+      productos.push({
+        nombre: productoData.nombre,
+        id: productoData.id,
+        descripcion: productoData.descripcion,
+        precio: productoData.precio,
+        categoria: productoData.categoria,
+        img: productoData.img,
+        specs: productoData.specs || []
+      });
+    });
+
+    console.log(`✅ ${productos.length} productos cargados desde Firebase`);
+
+  } catch (error) {
+    console.error("❌ Error cargando productos:", error);
+    productos = [];
+  }
+}
+
+
 
 // 🔥 VARIABLES GLOBALES PARA CONTROL DE CARGA
 let categoriaActual = localStorage.getItem('categoriaActual') || 'all';
