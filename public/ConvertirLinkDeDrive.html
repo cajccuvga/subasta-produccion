@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convertidor de Links de Google Drive - Subastas UVG</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #2d3748;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #718096;
+            font-size: 16px;
+        }
+
+        .icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .converter-box {
+            background: #f7fafc;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #2d3748;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s;
+            font-family: 'Courier New', monospace;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            flex: 1;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-convert {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-convert:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-copy {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-copy:hover {
+            background: #38a169;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(72, 187, 120, 0.3);
+        }
+
+        .btn-clear {
+            background: #f56565;
+            color: white;
+        }
+
+        .btn-clear:hover {
+            background: #e53e3e;
+            transform: translateY(-2px);
+        }
+
+        .result-box {
+            background: #edf2f7;
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .result-box.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-content {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            word-break: break-all;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #2d3748;
+            border: 2px solid #48bb78;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background: #c6f6d5;
+            color: #22543d;
+            border: 2px solid #48bb78;
+        }
+
+        .alert-error {
+            background: #fed7d7;
+            color: #742a2a;
+            border: 2px solid #f56565;
+        }
+
+        .instructions {
+            background: #fffaf0;
+            border-left: 4px solid #ed8936;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+
+        .instructions h3 {
+            color: #2d3748;
+            margin-bottom: 12px;
+            font-size: 18px;
+        }
+
+        .instructions ol {
+            margin-left: 20px;
+            color: #4a5568;
+            line-height: 1.8;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+        }
+
+        .examples {
+            background: #e6fffa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .examples h4 {
+            color: #2d3748;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+
+        .example-item {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #4a5568;
+        }
+
+        .example-label {
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-box {
+            flex: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        .preview-section {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .preview-section.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        .preview-image {
+            width: 100%;
+            max-width: 400px;
+            height: 300px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 12px;
+            margin: 20px auto;
+            display: block;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border: 3px solid #48bb78;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #718096;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="icon">🔗</div>
+            <h1>Convertidor de Links de Google Drive</h1>
+            <p>Herramienta para Subastas UVG - Convierte links de Drive al formato correcto</p>
+        </div>
+
+        <div class="converter-box">
+            <label for="inputLink">📥 Pega tu link de Google Drive aquí:</label>
+            <input 
+                type="text" 
+                id="inputLink" 
+                placeholder="https://drive.google.com/file/d/1ABC123XYZ/view?usp=sharing"
+                autocomplete="off"
+            >
+
+            <div class="button-group">
+                <button class="btn-convert" onclick="convertirLink()">
+                    ⚡ Convertir
+                </button>
+                <button class="btn-clear" onclick="limpiar()">
+                    🗑️ Limpiar
+                </button>
+            </div>
+        </div>
+
+        <div class="alert alert-success" id="alertSuccess">
+            ✅ ¡Link convertido exitosamente! Puedes copiarlo ahora.
+        </div>
+
+        <div class="alert alert-error" id="alertError">
+            ❌ Error: Por favor ingresa un link válido de Google Drive
+        </div>
+
+        <div class="result-box" id="resultBox">
+            <label>📤 Link convertido (formato /thumbnail):</label>
+            <div class="result-content" id="resultContent"></div>
+            <button class="btn-copy" onclick="copiarLink()" style="margin-top: 15px; width: 100%;">
+                📋 Copiar Link
+            </button>
+        </div>
+
+        <div class="preview-section" id="previewSection">
+            <label>🖼️ Vista previa de la imagen:</label>
+            <div class="preview-image" id="previewImage"></div>
+        </div>
+
+        <div class="stats" id="statsSection" style="display: none;">
+            <div class="stat-box">
+                <div class="stat-number" id="statConverted">0</div>
+                <div class="stat-label">Links convertidos</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number" id="statCopied">0</div>
+                <div class="stat-label">Links copiados</div>
+            </div>
+        </div>
+
+        <div class="instructions">
+            <h3>📋 Instrucciones de uso:</h3>
+            <ol>
+                <li>Ve a <strong>Google Drive</strong> y sube tu imagen</li>
+                <li>Haz <strong>clic derecho</strong> sobre la imagen → "Obtener enlace"</li>
+                <li>Cambia los permisos a <strong>"Cualquier persona con el enlace"</strong></li>
+                <li><strong>Copia</strong> el link completo</li>
+                <li><strong>Pega</strong> el link en la caja de arriba</li>
+                <li>Haz clic en <strong>"Convertir"</strong></li>
+                <li>¡Listo! Ahora puedes <strong>copiar</strong> el link convertido</li>
+            </ol>
+        </div>
+
+        <div class="examples">
+            <h4>📝 Formatos aceptados:</h4>
+            
+            <div class="example-item">
+                <div class="example-label">✅ Formato 1:</div>
+                https://drive.google.com/file/d/1ABC123/view
+            </div>
+
+            <div class="example-item">
+                <div class="example-label">✅ Formato 2:</div>
+                https://drive.google.com/file/d/1ABC123/view?usp=sharing
+            </div>
+
+            <div class="example-item">
+                <div class="example-label">✅ Formato 3:</div>
+                https://drive.google.com/open?id=1ABC123
+            </div>
+
+            <div class="example-item">
+                <div class="example-label">✅ Solo el ID:</div>
+                1ABC123XYZ789
+            </div>
+        </div>
+
+        <div class="footer">
+            🚀 Subastas UVG - Herramienta de conversión de links | Desarrollado con ❤️
+        </div>
+    </div>
+
+    <script>
+        let convertedCount = 0;
+        let copiedCount = 0;
+
+        function extraerID(link) {
+            // Limpiar espacios
+            link = link.trim();
+
+            // Si es solo el ID (sin https://)
+            if (!link.includes('http') && link.length > 20) {
+                return link;
+            }
+
+            // Formato: /file/d/ID/
+            let match = link.match(/\/file\/d\/([^\/\?]+)/);
+            if (match) return match[1];
+
+            // Formato: /open?id=ID
+            match = link.match(/[\?&]id=([^&]+)/);
+            if (match) return match[1];
+
+            // Formato: /d/ID (sin /file/)
+            match = link.match(/\/d\/([^\/\?]+)/);
+            if (match) return match[1];
+
+            return null;
+        }
+
+        function convertirLink() {
+            const input = document.getElementById('inputLink');
+            const link = input.value.trim();
+
+            if (!link) {
+                mostrarError('Por favor ingresa un link');
+                return;
+            }
+
+            const id = extraerID(link);
+
+            if (!id) {
+                mostrarError('No se pudo extraer el ID del link. Verifica que sea un link válido de Google Drive.');
+                return;
+            }
+
+            const linkConvertido = `https://drive.google.com/thumbnail?id=${id}&sz=w1000`;
+
+            // Mostrar resultado
+            document.getElementById('resultContent').textContent = linkConvertido;
+            document.getElementById('resultBox').classList.add('show');
+            
+            // Mostrar vista previa
+            document.getElementById('previewImage').style.backgroundImage = `url('${linkConvertido}')`;
+            document.getElementById('previewSection').classList.add('show');
+
+            // Mostrar alerta de éxito
+            mostrarExito();
+
+            // Actualizar estadísticas
+            convertedCount++;
+            actualizarEstadisticas();
+        }
+
+        function copiarLink() {
+            const resultado = document.getElementById('resultContent').textContent;
+            
+            // Copiar al portapapeles
+            navigator.clipboard.writeText(resultado).then(() => {
+                const btn = event.target;
+                const textoOriginal = btn.textContent;
+                
+                btn.textContent = '✅ ¡Copiado!';
+                btn.style.background = '#38a169';
+                
+                // Actualizar estadísticas
+                copiedCount++;
+                actualizarEstadisticas();
+
+                setTimeout(() => {
+                    btn.textContent = textoOriginal;
+                    btn.style.background = '#48bb78';
+                }, 2000);
+            }).catch(err => {
+                alert('Error al copiar. Intenta seleccionar y copiar manualmente.');
+            });
+        }
+
+        function limpiar() {
+            document.getElementById('inputLink').value = '';
+            document.getElementById('resultBox').classList.remove('show');
+            document.getElementById('previewSection').classList.remove('show');
+            document.getElementById('alertSuccess').classList.remove('show');
+            document.getElementById('alertError').classList.remove('show');
+        }
+
+        function mostrarExito() {
+            const alertSuccess = document.getElementById('alertSuccess');
+            const alertError = document.getElementById('alertError');
+            
+            alertError.classList.remove('show');
+            alertSuccess.classList.add('show');
+
+            setTimeout(() => {
+                alertSuccess.classList.remove('show');
+            }, 5000);
+        }
+
+        function mostrarError(mensaje) {
+            const alertError = document.getElementById('alertError');
+            const alertSuccess = document.getElementById('alertSuccess');
+            
+            alertError.textContent = '❌ Error: ' + mensaje;
+            alertSuccess.classList.remove('show');
+            alertError.classList.add('show');
+
+            document.getElementById('resultBox').classList.remove('show');
+            document.getElementById('previewSection').classList.remove('show');
+
+            setTimeout(() => {
+                alertError.classList.remove('show');
+            }, 5000);
+        }
+
+        function actualizarEstadisticas() {
+            document.getElementById('statsSection').style.display = 'flex';
+            document.getElementById('statConverted').textContent = convertedCount;
+            document.getElementById('statCopied').textContent = copiedCount;
+        }
+
+        // Convertir al presionar Enter
+        document.getElementById('inputLink').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                convertirLink();
+            }
+        });
+
+        // Auto-foco en el input al cargar
+        window.addEventListener('load', function() {
+            document.getElementById('inputLink').focus();
+        });
+    </script>
+</body>
+</html>

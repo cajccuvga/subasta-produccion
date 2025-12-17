@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Venta UVG — Catálogo de Equipos</title>
+  <meta name="description" content="Venta UVG - Catálogo de equipos de cómputo. Cada artículo es único. Para solicitar, complete el formulario.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Overlay que bloquea la web fuera del horario permitido -->
+  <div id="dateOverlay" class="date-overlay" aria-hidden="true" style="display:none">
+    <img src="overlay.png" alt="Acceso restringido" class="overlay-img">
+    <div class="overlay-text">Sitio cerrado. Disponible del 2 dic 2025 18:00 al 5 dic 2025 18:00.</div>
+  </div>
+  <div class="container">
+    <header class="site-header">
+      <div class="brand">
+        <div class="logo">UVG</div>
+        <div>
+          <h1>Venta de Computadoras UVG</h1>
+          <p class="lead">Catálogo de equipos — cada artículo es único. Aproveche antes que se agoten.</p>
+          <p class="lead"><b>NOTA:</b>Se está adquiriendo hardware (equipos) no software (programas)</p>
+        </div>
+      </div>
+      <div class="cta">
+        <a class="btn" href="#catalog" onclick="document.querySelector('#catalog').scrollIntoView({behavior:'smooth'})">Ver catálogo</a>
+        <div>
+      <button class="btn ghost" id="adminPanel">Administrador</button>
+    </div>
+      </div>
+    </header>
+<!-- 🔥 FILTRO DE CATEGORÍAS -->
+<section class="categories-filter">
+  <div class="container">
+    <div class="filter-header">
+      <h3>Categorías</h3>
+      <div class="filter-count">
+        <span id="productCount">0</span> equipos encontrados
+      </div>
+    </div>
+    <div class="categories-grid">
+      <button class="category-btn active" data-category="all">
+        <!-- <span class="category-icon">📦</span>-->
+        <span>Todos los equipos</span>
+      </button>
+      <button class="category-btn" data-category="combos">
+        <!--<span class="category-icon">🎮</span>-->
+        <span>Combos</span>
+        <span class="category-badge" id="count-combos">0</span>
+      </button>
+      <button class="category-btn" data-category="laptops">
+        <!--<span class="category-icon">💻</span>-->
+        <span>Laptops</span>
+        <span class="category-badge" id="count-laptops">0</span>
+      </button>
+      <button class="category-btn" data-category="ups">
+        <!--<span class="category-icon">🔋</span>-->
+        <span>UPS</span>
+        <span class="category-badge" id="count-ups">0</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+    <main id="catalog">
+      <div class="grid" id="productsGrid" aria-live="polite"></div>
+    </main>
+
+  <!-- Modal detalle -->
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-card" role="document">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div>
+          <h3 id="modal-title">Producto</h3>
+          <div class="small" id="modal-sub">Descripción corta</div>
+        </div>
+        <div>
+          <button class="close" id="modalClose" title="Cerrar">✕</button>
+        </div>
+      </div>
+      <div class="modal-grid">
+        <div><div id="modalImg" class="img" style="background:#223344"></div></div>
+        <div>
+          <p id="modal-desc" class="small" style="margin-top:0"></p>
+          <ul id="modal-specs" style="padding-left:18px;color:var(--muted);margin-top:8px"></ul>
+          <div style="display:flex;gap:8px;align-items:center;margin-top:12px">
+            <div class="price" id="modal-price">$0.00</div>
+            <div id="modal-status" class="status available">Disponible</div>
+          </div>
+
+          <div style="margin-top:18px;display:flex;gap:10px">
+            <button class="btn" id="modalRequest">Solicitar este equipo</button>
+            <button class="btn ghost" id="modalClose2">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- email.js (herramienta para enviar la confirmación por correo) -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

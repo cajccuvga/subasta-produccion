@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Exportar Reservas</title>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+</head>
+<body>
+  <h1>Exportar reservas de subasta</h1>
+  <button onclick="exportarCSV()">Descargar reservas</button>
+
+  <script>
+    // Configuración del proyecto original (subasta-9245c)
+    const firebaseConfig = {
+        apiKey: "AIzaSyBMsj-KZnfIF5f-OuALBjLP28rumgpLbsU",
+        authDomain: "subasta-9245c.firebaseapp.com",
+        projectId: "subasta-9245c",
+        storageBucket: "subasta-9245c.firebasestorage.app",
+        messagingSenderId: "191632903649",
+        appId: "1:191632903649:web:2af689243ae8fa474096a0"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    async function exportarCSV() {
+      try {
+        const snapshot = await db.collection("reservas").get();
+        if (snapshot.empty) {
+          alert("No hay reservas registradas.");
+          return;
+        }
+
+        // Crear cabeceras
+        const encabezados = [
+          "codigo",
+          "email",
+          "estado",
+          "fecha",
+          "idProducto",
+          "nombre",
+          "precio",
+          "producto",
+          "telefono"
+        ];
+
+        // Construir el CSV
+        const filas = [encabezados.join(",")];
+
+        snapshot.forEach(doc => {
+          const d = doc.data();
+          const fila = [
+            `"${d.codigo || ""}"`,
+            `"${d.email || ""}"`,
+            `"${d.estado || ""}"`,
+            `"${d.fecha || ""}"`,
+            `"${d.idProducto || ""}"`,
+            `"${d.nombre || ""}"`,
+            d.precio || "",
+            `"${d.producto || ""}"`,
+            `"${d.telefono || ""}"`
+          ];
+          filas.push(fila.join(","));
+        });
+
+        // Crear blob y disparar descarga
+        const csvContent = filas.join("\n");
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", "reservas.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } catch (error) {
+        console.error("❌ Error al exportar:", error);
+        alert("Error al exportar. Revisa la consola.");
+      }
+    }
+  </script>
+</body>
+</html>
